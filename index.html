@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAMBOL ERP PICKING</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts: Sarabun & Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --gambol-red: #8B0000;
+      --gambol-red-dark: #660000;
+      --gambol-red-light: #B22222;
+      --gambol-red-subtle: #FDF2F2;
+      --bg-gray: #F4F5F7;
+      --surface-white: #FFFFFF;
+      --border-gray: #E2E5EC;
+      --ink-dark: #1E2229;
+      --ink-muted: #646D7A;
+      --sidebar-width: 270px;
+      --header-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-gray);
+      color: var(--ink-dark);
+      overflow: hidden;
+    }
+
+    /* Full height 100dvh to prevent mobile browser bar overlap */
+    .app-wrapper {
+      display: flex;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Sidebar Styling */
+    .sidebar {
+      width: var(--sidebar-width);
+      height: 100dvh;
+      background: #1B1E24;
+      color: #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: transform 0.25s ease-in-out;
+      z-index: 1040;
+      border-right: 1px solid #2D323C;
+    }
+
+    .sidebar-brand {
+      height: var(--header-height);
+      background: var(--gambol-red);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-brand .brand-badge {
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.75rem 0.65rem 2rem;
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background: #3A404D;
+      border-radius: 4px;
+    }
+
+    .nav-category {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8C96A6;
+      padding: 0.85rem 0.75rem 0.35rem;
+      margin-top: 0.25rem;
+    }
+
+    .nav-item-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.55rem 0.75rem;
+      margin-bottom: 2px;
+      border: none;
+      background: transparent;
+      color: #CBD5E1;
+      font-size: 0.86rem;
+      font-weight: 500;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item-btn i {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+      color: #94A3B8;
+      transition: color 0.15s ease;
+    }
+
+    .nav-item-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      color: #FFFFFF;
+    }
+    .nav-item-btn:hover i {
+      color: #FFFFFF;
+    }
+
+    .nav-item-btn.active {
+      background: var(--gambol-red);
+      color: #FFFFFF;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
+    }
+
+    .nav-item-btn.active i {
+      color: #FFFFFF;
+    }
+
+    /* Main Content Area */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      overflow: hidden;
+      background: var(--bg-gray);
+    }
+
+    .top-navbar {
+      height: var(--header-height);
+      background: var(--surface-white);
+      border-bottom: 1px solid var(--border-gray);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .content-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    /* Custom Theme UI Elements */
+    .page-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 2px solid var(--border-gray);
+    }
+
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--ink-dark);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .page-title i {
+      color: var(--gambol-red);
+    }
+
+    .page-subtitle {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      margin: 0.15rem 0 0 0;
+    }
+
+    .card-erp {
+      background: var(--surface-white);
+      border: 1px solid var(--border-gray);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+      margin-bottom: 1.25rem;
+    }
+
+    .card-erp-header {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--border-gray);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FAFAFB;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .card-erp-body {
+      padding: 1.25rem;
+    }
+
+    .kpi-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-gray);
+      border-left: 4px solid var(--gambol-red);
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+      box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+      height: 100%;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      letter-spacing: 0.4px;
+    }
+
+    .kpi-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--ink-dark);
+      margin: 0.25rem 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-gambol {
+      background-color: var(--gambol-red);
+      border-color: var(--gambol-red);
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+
+    .btn-gambol:hover, .btn-gambol:focus {
+      background-color: var(--gambol-red-dark);
+      border-color: var(--gambol-red-dark);
+      color: #FFFFFF;
+    }
+
+    .btn-outline-gambol {
+      color: var(--gambol-red);
+      border-color: var(--gambol-red);
+      background: transparent;
+      font-weight: 500;
+    }
+
+    .btn-outline-gambol:hover {
+      background-color: var(--gambol-red);
+      color: #FFFFFF;
+    }
+
+    .badge-sample {
+      background-color: var(--gambol-red-subtle);
+      color: var(--gambol-red);
+      border: 1px solid #F5C2C7;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .table-erp th {
+      background-color: #F8F9FA;
+      color: #495057;
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid var(--border-gray);
+      white-space: nowrap;
+    }
+
+    .table-erp td {
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    .qr-preview-box {
+      border: 2px dashed var(--border-gray);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      background: #FAFAFB;
+    }
+
+    .upload-dropzone {
+      border: 2px dashed var(--gambol-red-light);
+      background: var(--gambol-red-subtle);
+      border-radius: 10px;
+      padding: 2.25rem 1.5rem;
+      text-align: center;
+    }
+
+    /* Mobile Sidebar Overlay */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 1035;
+    }
+
+    @media (max-width: 991.98px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+      }
+      .sidebar.show {
+        transform: translateX(0);
+      }
+      .content-scroll {
+        padding: 1rem;
+      }
+    }
+  </style>
+<style data-link-removed-style>a[data-link-removed],a[href*="zPythonSafez"]:not([onclick]){pointer-events:none!important;cursor:default!important;opacity:.6}</style></head>
+<body>
+
+<div class="app-wrapper">
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebarBackdrop" class="sidebar-backdrop d-none" onclick="toggleSidebar(false)"></div>
+
+  <!-- Left Sidebar -->
+  <aside id="appSidebar" class="sidebar" aria-label="Main Navigation">
+    <div class="sidebar-brand">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-box-seam-fill fs-5"></i>
+        <span>GAMBOL ERP</span>
+      </div>
+      <span class="brand-badge">PICKING</span>
+      <button class="btn btn-sm text-white d-lg-none p-0 ms-1" onclick="toggleSidebar(false)" aria-label="Close Sidebar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Category: MAIN -->
+      <div class="nav-category">MAIN</div>
+      <button type="button" class="nav-item-btn active" data-page="page-home" data-hash="home" onclick="switchMenu('page-home')">
+        <i class="bi bi-speedometer2"></i> <span>HOME</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-create-picking" data-hash="picking" onclick="switchMenu('page-create-picking')">
+        <i class="bi bi-file-earmark-plus"></i> <span>CREATE PICKING</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-create-pbl" data-hash="pblmanual" onclick="switchMenu('page-create-pbl')">
+        <i class="bi bi-layers-half"></i> <span>CREATE PBL</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-active-picking" data-hash="activepicking" onclick="switchMenu('page-active-picking')">
+        <i class="bi bi-activity"></i> <span>ACTIVE PICKING</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-job-order" data-hash="joborder" onclick="switchMenu('page-job-order')">
+        <i class="bi bi-card-checklist"></i> <span>JOB ORDER</span>
+      </button>
+
+      <!-- Category: MASTER / MANAGEMENT -->
+      <div class="nav-category">MASTER / MANAGEMENT</div>
+      <button type="button" class="nav-item-btn" data-page="page-upload-erp-stock" data-hash="uploaderp" onclick="switchMenu('page-upload-erp-stock')">
+        <i class="bi bi-cloud-arrow-up"></i> <span>UPLOAD ERP STOCK</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-upc-master" data-hash="upcmaster" onclick="switchMenu('page-upc-master')">
+        <i class="bi bi-upc-scan"></i> <span>UPC MASTER</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-loose-location" data-hash="looselocation" onclick="switchMenu('page-loose-location')">
+        <i class="bi bi-boxes"></i> <span>LOOSE LOCATION</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-forbidden-location" data-hash="forbiddenlocation" onclick="switchMenu('page-forbidden-location')">
+        <i class="bi bi-slash-circle"></i> <span>FORBIDDEN LOCATION</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-location-qr-master" data-hash="locationqr" onclick="switchMenu('page-location-qr-master')">
+        <i class="bi bi-qr-code"></i> <span>LOCATION QR MASTER</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-erp-stock" data-hash="erpstock" onclick="switchMenu('page-erp-stock')">
+        <i class="bi bi-database-check"></i> <span>ERP STOCK</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-w-center-stock" data-hash="wcenterstock" onclick="switchMenu('page-w-center-stock')">
+        <i class="bi bi-building"></i> <span>W-CENTER STOCK</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-wbt-stock" data-hash="wbtstock" onclick="switchMenu('page-wbt-stock')">
+        <i class="bi bi-archive"></i> <span>WBT STOCK</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-shortage-report" data-hash="shortagereport" onclick="switchMenu('page-shortage-report')">
+        <i class="bi bi-exclamation-triangle"></i> <span>SHORTAGE REPORT</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-bt-wcenter-export" data-hash="btwcenterexport" onclick="switchMenu('page-bt-wcenter-export')">
+        <i class="bi bi-file-earmark-arrow-down"></i> <span>BT / W-CENTER EXPORT</span>
+      </button>
+      <button type="button" class="nav-item-btn" data-page="page-reserved-stock" data-hash="reservedstock" onclick="switchMenu('page-reserved-stock')">
+        <i class="bi bi-shield-lock"></i> <span>RESERVED STOCK</span>
+      </button>
+
+      <!-- Category: HISTORY -->
+      <div class="nav-category">HISTORY</div>
+      <button type="button" class="nav-item-btn" data-page="page-completed-jobs" data-hash="completedjobs" onclick="switchMenu('page-completed-jobs')">
+        <i class="bi bi-clock-history"></i> <span>COMPLETED JOBS</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Right Main Content -->
+  <div class="main-area">
+    <!-- Top Header Bar -->
+    <header class="top-navbar">
+      <div class="d-flex align-items-center gap-3">
+        <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none" onclick="toggleSidebar(true)" aria-label="Toggle Menu">
+          <i class="bi bi-list fs-5"></i>
+        </button>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span class="fw-bold text-secondary small">MODULE:</span>
+          <span id="currentHeaderTitle" class="badge bg-dark px-2 py-1">HOME</span>
+          <code id="currentHashRoute" class="small px-2 py-1 rounded bg-light border text-danger fw-semibold">#home</code>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span id="gasApiBadge" class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+          <i class="bi bi-cloud-check-fill me-1"></i>GAS API Connected
+        </span>
+        <span class="badge-sample">Mockup / Sample Data (ข้อมูลจำลอง)</span>
+      </div>
+    </header>
+
+    <!-- SPA Dynamic Content Area -->
+    <main class="content-scroll">
+
+      <!-- ==========================================
+           1. HOME (DASHBOARD)
+      =========================================== -->
+      <section id="page-home" class="spa-page">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-speedometer2"></i> HOME - ภาพรวมระบบหยิบสินค้า (Dashboard)</h1>
+            <p class="page-subtitle">สรุปจำนวนงานหยิบสินค้า สถานะคลังสินค้า และกราฟจำลองประจำวัน (Sample Data)</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-gambol" onclick="loadDashboardData()">
+            <i class="bi bi-arrow-clockwise me-1"></i> รีเฟรชข้อมูล
+          </button>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card">
+              <div class="kpi-label">งานหยิบทั้งหมดวันนี้ (Total Jobs)</div>
+              <div class="kpi-value" id="kpi-total-jobs">48</div>
+              <div class="small text-muted">ข้อมูลจำลอง (Sample)</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card" style="border-left-color: #0D6EFD;">
+              <div class="kpi-label">กำลังดำเนินการหยิบ (Active Picking)</div>
+              <div class="kpi-value text-primary" id="kpi-active-jobs">12</div>
+              <div class="small text-muted">กำลังหยิบในคลัง W-Center / WBT</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card" style="border-left-color: #198754;">
+              <div class="kpi-label">งานที่เสร็จสมบูรณ์ (Completed)</div>
+              <div class="kpi-value text-success" id="kpi-completed-jobs">34</div>
+              <div class="small text-muted">คิดเป็น 70.8% ของแผนงาน</div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kpi-card" style="border-left-color: #DC3545;">
+              <div class="kpi-label">รายการขาดสต็อก (Shortage Items)</div>
+              <div class="kpi-value text-danger" id="kpi-shortage-items">2</div>
+              <div class="small text-muted">ต้องตรวจสอบสต็อก ERP</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated Charts -->
+        <div class="row g-3">
+          <div class="col-12 col-lg-7">
+            <div class="card-erp h-100 mb-0">
+              <div class="card-erp-header">
+                <span><i class="bi bi-bar-chart-fill text-danger me-2"></i>กราฟจำลองปริมาณงานหยิบรายชั่วโมง (Simulated Picking Volume)</span>
+                <span class="badge-sample">Mock Chart</span>
+              </div>
+              <div class="card-erp-body">
+                <div style="height: 240px;" class="d-flex align-items-end justify-content-around pt-4 pb-2 px-3 border rounded bg-light">
+                  <div class="text-center" style="width: 12%;">
+                    <div class="small fw-bold mb-1">18</div>
+                    <div class="mx-auto rounded-top" style="height: 90px; width: 100%; max-width: 42px; background: var(--gambol-red);"></div>
+                    <div class="small text-muted mt-2">08:00</div>
+                  </div>
+                  <div class="text-center" style="width: 12%;">
+                    <div class="small fw-bold mb-1">32</div>
+                    <div class="mx-auto rounded-top" style="height: 150px; width: 100%; max-width: 42px; background: var(--gambol-red);"></div>
+                    <div class="small text-muted mt-2">10:00</div>
+                  </div>
+                  <div class="text-center" style="width: 12%;">
+                    <div class="small fw-bold mb-1">24</div>
+                    <div class="mx-auto rounded-top" style="height: 115px; width: 100%; max-width: 42px; background: var(--gambol-red);"></div>
+                    <div class="small text-muted mt-2">12:00</div>
+                  </div>
+                  <div class="text-center" style="width: 12%;">
+                    <div class="small fw-bold mb-1">38</div>
+                    <div class="mx-auto rounded-top" style="height: 175px; width: 100%; max-width: 42px; background: var(--gambol-red);"></div>
+                    <div class="small text-muted mt-2">14:00</div>
+                  </div>
+                  <div class="text-center" style="width: 12%;">
+                    <div class="small fw-bold mb-1">29</div>
+                    <div class="mx-auto rounded-top" style="height: 135px; width: 100%; max-width: 42px; background: var(--gambol-red-light);"></div>
+                    <div class="small text-muted mt-2">16:00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-5">
+            <div class="card-erp h-100 mb-0">
+              <div class="card-erp-header">
+                <span><i class="bi bi-pie-chart-fill text-danger me-2"></i>สัดส่วนสถานะงานตามคลัง (Warehouse Split)</span>
+                <span class="badge-sample">Sample</span>
+              </div>
+              <div class="card-erp-body d-flex flex-column justify-content-center">
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between small fw-semibold mb-1">
+                    <span>W-CENTER STOCK PICKING</span>
+                    <span>65% (31 งาน)</span>
+                  </div>
+                  <div class="progress" style="height: 12px;">
+                    <div class="progress-bar" role="progressbar" style="width: 65%; background-color: var(--gambol-red);"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between small fw-semibold mb-1">
+                    <span>WBT STOCK PICKING</span>
+                    <span>25% (12 งาน)</span>
+                  </div>
+                  <div class="progress" style="height: 12px;">
+                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%;"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex justify-content-between small fw-semibold mb-1">
+                    <span>LOOSE LOCATION PICKING</span>
+                    <span>10% (5 งาน)</span>
+                  </div>
+                  <div class="progress" style="height: 12px;">
+                    <div class="progress-bar bg-dark" role="progressbar" style="width: 10%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           2. CREATE PICKING
+      =========================================== -->
+      <section id="page-create-picking" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-file-earmark-plus"></i> CREATE PICKING - สร้างใบหยิบสินค้า</h1>
+            <p class="page-subtitle">ฟอร์มสำหรับเปิดใบหยิบสินค้าใหม่เข้าสู่ระบบคลังสินค้า</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">ข้อมูลใบหยิบสินค้า (Picking Slip Form)</div>
+          <div class="card-erp-body">
+            <form id="formCreatePicking" onsubmit="handleFormSubmit(event, 'CREATE PICKING')">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">เลขที่ใบสั่งขาย (SO / Order No.)</label>
+                  <input type="text" class="form-control" placeholder="เช่น SO-202505-001" required />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">ลูกค้า (Customer)</label>
+                  <select class="form-select" required>
+                    <option value="">-- เลือกลูกค้า --</option>
+                    <option value="CUST-01">BIG C SUPERCENTER</option>
+                    <option value="CUST-02">LOTUS'S STORES</option>
+                    <option value="CUST-03">ROBINSON DEPARTMENT STORE</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">คลังสินค้าต้นทาง (Warehouse)</label>
+                  <select class="form-select" required>
+                    <option value="W-CENTER">W-CENTER</option>
+                    <option value="WBT">WBT</option>
+                    <option value="ERP-MAIN">ERP MAIN</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">รหัสสินค้า / SKU</label>
+                  <input type="text" class="form-control" placeholder="เช่น GM-11029-BLK-40" required />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">จำนวนที่ต้องการหยิบ (Qty)</label>
+                  <input type="number" class="form-control" min="1" value="120" required />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">ระดับความสำคัญ (Priority)</label>
+                  <select class="form-select">
+                    <option value="NORMAL">ปกติ (Normal)</option>
+                    <option value="URGENT">ด่วน (Urgent)</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold">หมายเหตุ (Remarks)</label>
+                  <textarea class="form-control" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติมสำหรับการหยิบสินค้า..."></textarea>
+                </div>
+                <div class="col-12 d-flex gap-2 pt-2">
+                  <button type="submit" class="btn btn-gambol">
+                    <i class="bi bi-save me-1"></i> บันทึกสร้างใบหยิบสินค้า
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">ล้างค่า</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           3. CREATE PBL (#pblmanual)
+      =========================================== -->
+      <section id="page-create-pbl" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-layers-half"></i> CREATE PBL - สร้างใบ Pick By Line (#pblmanual)</h1>
+            <p class="page-subtitle">สร้างใบสั่งหยิบแบบ Pick By Line (PBL Manual) แยกตามสายส่ง ลูกค้า และรายการสินค้า</p>
+          </div>
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 font-monospace">#pblmanual</span>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span><i class="bi bi-file-earmark-text text-danger me-2"></i>ข้อมูลหลักใบงาน PBL (PBL Header & Manual Entry)</span>
+            <span class="badge-sample">PBL Manual Mode</span>
+          </div>
+          <div class="card-erp-body">
+            <form id="formCreatePbl" onsubmit="handlePblManualSubmit(event)">
+              <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">รหัสชุด PBL (PBL Batch No.)</label>
+                  <input type="text" id="pblBatchNo" class="form-control" value="PBL-202505-A01" required />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">คลังสินค้า (Warehouse)</label>
+                  <select id="pblWarehouse" class="form-select" required>
+                    <option value="W-CENTER">W-CENTER</option>
+                    <option value="WBT">WBT</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">สายส่ง / โซนจัดส่ง (Route / Line)</label>
+                  <select id="pblRoute" class="form-select" required>
+                    <option value="LINE-BKK">สายกรุงเทพฯ และปริมณฑล</option>
+                    <option value="LINE-NORTH">สายภาคเหนือ</option>
+                    <option value="LINE-NE">สายภาคตะวันออกเฉียงเหนือ</option>
+                    <option value="LINE-SOUTH">สายภาคใต้</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">วันที่จัดส่ง (Delivery Date)</label>
+                  <input type="date" id="pblDeliveryDate" class="form-control" value="2025-05-15" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">อ้างอิงเลขที่ใบสั่งงาน (Job Order Ref)</label>
+                  <input type="text" id="pblJobOrderRef" class="form-control" value="JO-202505-0089" placeholder="เช่น JO-2025-0089, JO-2025-0090" required />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">ผู้รับผิดชอบ (Assigned Picker Group)</label>
+                  <select id="pblTeam" class="form-select">
+                    <option value="TEAM-A">ทีมหยิบ A (Zone 1-2)</option>
+                    <option value="TEAM-B">ทีมหยิบ B (Zone 3-4)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- ส่วนเพิ่มรายการสินค้าเข้าใบ PBL แบบ Manual (#pblmanual) -->
+              <div class="p-3 rounded border bg-light mb-3">
+                <div class="fw-bold small text-uppercase text-secondary mb-2">
+                  <i class="bi bi-plus-square-dotted text-danger me-1"></i> เพิ่มรายการสินค้าแบบ Manual (Add PBL Line Item)
+                </div>
+                <div class="row g-2 align-items-end">
+                  <div class="col-12 col-md-3">
+                    <label class="form-label small fw-semibold mb-1">ลูกค้า / สาขาปลายทาง (Store)</label>
+                    <select id="pblItemCustomer" class="form-select form-select-sm">
+                      <option value="BIG C - พระราม 4">BIG C - พระราม 4</option>
+                      <option value="LOTUS - บางนา">LOTUS - บางนา</option>
+                      <option value="ROBINSON - พระราม 9">ROBINSON - พระราม 9</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-3">
+                    <label class="form-label small fw-semibold mb-1">รหัสสินค้า (SKU / Barcode)</label>
+                    <input type="text" id="pblItemSku" class="form-control form-control-sm" placeholder="เช่น GM-11029-BLK-41" value="GM-11029-BLK-41" />
+                  </div>
+                  <div class="col-6 col-md-2">
+                    <label class="form-label small fw-semibold mb-1">Location ต้นทาง</label>
+                    <input type="text" id="pblItemLoc" class="form-control form-control-sm" value="WC-A01-02" />
+                  </div>
+                  <div class="col-6 col-md-2">
+                    <label class="form-label small fw-semibold mb-1">จำนวนหยิบ (คู่)</label>
+                    <input type="number" id="pblItemQty" class="form-control form-control-sm" min="1" value="60" />
+                  </div>
+                  <div class="col-12 col-md-2">
+                    <button type="button" class="btn btn-sm btn-outline-gambol w-100" onclick="addPblManualRow()">
+                      <i class="bi bi-plus-lg me-1"></i> เพิ่มรายการ
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ตารางรายการในใบ PBL Manual -->
+              <div class="table-responsive border rounded mb-3">
+                <table class="table table-hover table-erp mb-0">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Store / Customer</th>
+                      <th>SKU</th>
+                      <th>Source Location</th>
+                      <th class="text-end">Qty (คู่)</th>
+                      <th class="text-center">ลบ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pblManualTableBody">
+                    <tr>
+                      <td>1</td>
+                      <td>BIG C - พระราม 4</td>
+                      <td class="fw-bold">GM-11029-BLK-40</td>
+                      <td><span class="badge bg-secondary">WC-A01-01</span></td>
+                      <td class="text-end fw-bold">120</td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removePblRow(this)" aria-label="Remove Row">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>LOTUS - บางนา</td>
+                      <td class="fw-bold">GM-11029-BLK-41</td>
+                      <td><span class="badge bg-secondary">WC-A01-02</span></td>
+                      <td class="text-end fw-bold">72</td>
+                      <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removePblRow(this)" aria-label="Remove Row">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-1">
+                <div class="small text-muted">
+                  รวมจำนวนรายการในใบ PBL: <strong id="pblRowCount" class="text-dark">2</strong> รายการ
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-gambol">
+                    <i class="bi bi-check2-circle me-1"></i> ยืนยันสร้างใบ PBL (Save to Google Sheet)
+                  </button>
+                  <button type="reset" class="btn btn-outline-secondary">รีเซ็ต</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           4. ACTIVE PICKING
+      =========================================== -->
+      <section id="page-active-picking" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-activity"></i> ACTIVE PICKING - รายการที่กำลังหยิบสินค้า</h1>
+            <p class="page-subtitle">ติดตามสถานะและความคืบหน้า (Progress) ของใบงานที่กำลังหยิบในคลัง</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-gambol" onclick="fetchFromGAS('getActivePicking')">
+            <i class="bi bi-arrow-repeat me-1"></i> อัปเดตสถานะ
+          </button>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางรายการกำลังหยิบ (Active Picking List)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Picking ID</th>
+                    <th>Customer</th>
+                    <th>Warehouse</th>
+                    <th>Picker</th>
+                    <th style="min-width: 180px;">Progress (ความคืบหน้า)</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">PK-202505-101</td>
+                    <td>BIG C SUPERCENTER</td>
+                    <td>W-CENTER</td>
+                    <td>สมชาย คลังสินค้า</td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="progress flex-grow-1" style="height: 10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 75%;"></div>
+                        </div>
+                        <span class="small fw-semibold">75% (90/120)</span>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-primary">In Progress</span></td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">PK-202505-102</td>
+                    <td>LOTUS'S STORES</td>
+                    <td>WBT</td>
+                    <td>วิภาวรรณ หยิบไว</td>
+                    <td>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="progress flex-grow-1" style="height: 10px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 40%;"></div>
+                        </div>
+                        <span class="small fw-semibold">40% (20/50)</span>
+                      </div>
+                    </td>
+                    <td><span class="badge bg-warning text-dark">Picking</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           5. JOB ORDER
+      =========================================== -->
+      <section id="page-job-order" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-card-checklist"></i> JOB ORDER - รายการคำสั่งงานทั้งหมด</h1>
+            <p class="page-subtitle">จัดการคำสั่งงานหยิบสินค้า ตรวจสอบ และสั่งพิมพ์ใบงาน</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางคำสั่งงาน (All Job Orders)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Job Order No.</th>
+                    <th>Doc Date</th>
+                    <th>Customer</th>
+                    <th class="text-end">Total Qty</th>
+                    <th>Status</th>
+                    <th class="text-center">จัดการ (Actions)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0089</td>
+                    <td>2025-05-14</td>
+                    <td>BIG C SUPERCENTER</td>
+                    <td class="text-end">240</td>
+                    <td><span class="badge bg-info text-dark">Assigned</span></td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm btn-outline-gambol me-1" onclick="notifyAction('เปิดดูรายละเอียด JO-202505-0089')">ดูงาน</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('เปลี่ยนสถานะ JO-202505-0089')">แก้ไข</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0090</td>
+                    <td>2025-05-14</td>
+                    <td>ROBINSON DEPT</td>
+                    <td class="text-end">180</td>
+                    <td><span class="badge bg-secondary">Pending</span></td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm btn-outline-gambol me-1" onclick="notifyAction('เปิดดูรายละเอียด JO-202505-0090')">ดูงาน</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('เปลี่ยนสถานะ JO-202505-0090')">แก้ไข</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           6. UPLOAD ERP STOCK
+      =========================================== -->
+      <section id="page-upload-erp-stock" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-cloud-arrow-up"></i> UPLOAD ERP STOCK - อัปโหลดไฟล์สต็อก ERP</h1>
+            <p class="page-subtitle">นำเข้าไฟล์ Excel (.xlsx) หรือ CSV (.csv) เพื่ออัปเดตข้อมูลสต็อกจากระบบ ERP</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">อัปโหลดไฟล์ข้อมูลสต็อก (Excel / CSV)</div>
+          <div class="card-erp-body">
+            <form onsubmit="handleFormSubmit(event, 'UPLOAD ERP STOCK')">
+              <div class="upload-dropzone mb-3">
+                <i class="bi bi-file-earmark-spreadsheet text-danger fs-1"></i>
+                <h6 class="fw-bold mt-2 mb-1">เลือกไฟล์สต็อก ERP (.xlsx, .csv)</h6>
+                <p class="small text-muted mb-3">รองรับคอลัมน์มาตรฐาน: SKU, UPC, Location, OnHandQty</p>
+                <input type="file" class="form-control mx-auto" style="max-width: 380px;" accept=".csv,.xlsx,.xls" required />
+              </div>
+              <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-gambol">
+                  <i class="bi bi-upload me-1"></i> อัปโหลดและซิงค์สต็อก
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">ประวัติการอัปโหลดล่าสุด (Recent Upload Logs)</div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>File Name</th>
+                    <th class="text-end">Rows Imported</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2025-05-14 08:30</td>
+                    <td>ERP_STOCK_20250514_AM.xlsx</td>
+                    <td class="text-end">1,450</td>
+                    <td><span class="badge bg-success">Success</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           7. UPC MASTER
+      =========================================== -->
+      <section id="page-upc-master" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-upc-scan"></i> UPC MASTER - จัดการรหัสบาร์โค้ดสินค้า</h1>
+            <p class="page-subtitle">เพิ่ม/แก้ไขข้อมูลรหัสบาร์โค้ด UPC คู่กับรหัสสินค้า GAMBOL SKU</p>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-lg-4">
+            <div class="card-erp">
+              <div class="card-erp-header">ฟอร์มเพิ่ม / แก้ไข UPC</div>
+              <div class="card-erp-body">
+                <form onsubmit="handleFormSubmit(event, 'UPC MASTER')">
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">รหัสบาร์โค้ด (UPC Code)</label>
+                    <input type="text" class="form-control" placeholder="8851234567890" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">รหัสสินค้า (Item SKU)</label>
+                    <input type="text" class="form-control" placeholder="GM-42011-NVY-41" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">รายละเอียด / รุ่น-สี-ไซส์</label>
+                    <input type="text" class="form-control" placeholder="รองเท้าแตะแกมโบล GM42011 กรมท่า เบอร์ 41" required />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">จำนวนบรรจุต่อกล่อง (Pack Size)</label>
+                    <input type="number" class="form-control" value="12" min="1" required />
+                  </div>
+                  <button type="submit" class="btn btn-gambol w-100">
+                    <i class="bi bi-plus-circle me-1"></i> บันทึกข้อมูล UPC
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-8">
+            <div class="card-erp">
+              <div class="card-erp-header">
+                <span>ตารางรายการบาร์โค้ด (UPC Master List)</span>
+                <span class="badge-sample">Mock Data 2 แถว</span>
+              </div>
+              <div class="card-erp-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover table-erp mb-0">
+                    <thead>
+                      <tr>
+                        <th>UPC Barcode</th>
+                        <th>SKU</th>
+                        <th>Description</th>
+                        <th class="text-end">Pack</th>
+                        <th class="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold font-monospace">8859011200412</td>
+                        <td>GM-11029-BLK-41</td>
+                        <td>GAMBOL 11029 สีดำ เบอร์ 41</td>
+                        <td class="text-end">12</td>
+                        <td class="text-center">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('แก้ไข UPC 8859011200412')">แก้ไข</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold font-monospace">8859011200429</td>
+                        <td>GM-11029-BLK-42</td>
+                        <td>GAMBOL 11029 สีดำ เบอร์ 42</td>
+                        <td class="text-end">12</td>
+                        <td class="text-center">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('แก้ไข UPC 8859011200429')">แก้ไข</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           8. LOOSE LOCATION
+      =========================================== -->
+      <section id="page-loose-location" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-boxes"></i> LOOSE LOCATION - จัดการพื้นที่งานเศษ</h1>
+            <p class="page-subtitle">ค้นหาและบริหารจัดการสต็อกงานเศษรายลูกค้าและ Location</p>
+          </div>
+        </div>
+
+        <!-- Filter Bar required by spec: Dropdown Customer, Search Warehouse/Location, Refresh Button -->
+        <div class="card-erp">
+          <div class="card-erp-body">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">เลือกลูกค้า (Customer)</label>
+                <select id="looseCustomerSelect" class="form-select">
+                  <option value="ALL">ทั้งหมด (All Customers)</option>
+                  <option value="BIGC">BIG C SUPERCENTER</option>
+                  <option value="LOTUS">LOTUS'S STORES</option>
+                  <option value="ROBINSON">ROBINSON DEPT</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-5">
+                <label class="form-label fw-semibold">ค้นหา Warehouse / Location</label>
+                <input type="text" id="looseLocationSearch" class="form-control" placeholder="พิมพ์รหัสคลัง หรือ Location เช่น W-CENTER, L-01-A..." />
+              </div>
+              <div class="col-12 col-md-3 d-flex gap-2">
+                <button type="button" class="btn btn-gambol w-100" onclick="fetchFromGAS('getLooseLocations')">
+                  <i class="bi bi-arrow-clockwise me-1"></i> รีเฟรช (Refresh)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางรายการงานเศษ (Loose Location Inventory)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Warehouse</th>
+                    <th>Location Code</th>
+                    <th>Customer</th>
+                    <th>SKU</th>
+                    <th class="text-end">Loose Qty (คู่)</th>
+                    <th>Updated At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>W-CENTER</td>
+                    <td class="fw-bold">LS-A01-02</td>
+                    <td>BIG C SUPERCENTER</td>
+                    <td>GM-11029-BLK-40</td>
+                    <td class="text-end fw-bold text-danger">7</td>
+                    <td>2025-05-14 09:15</td>
+                  </tr>
+                  <tr>
+                    <td>WBT</td>
+                    <td class="fw-bold">LS-B03-01</td>
+                    <td>LOTUS'S STORES</td>
+                    <td>GM-42011-NVY-42</td>
+                    <td class="text-end fw-bold text-danger">5</td>
+                    <td>2025-05-14 10:05</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           9. FORBIDDEN LOCATION
+      =========================================== -->
+      <section id="page-forbidden-location" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-slash-circle"></i> FORBIDDEN LOCATION - ตั้งค่า Location ที่ห้ามหยิบ</h1>
+            <p class="page-subtitle">กำหนดพื้นที่จัดเก็บที่ถูกระงับการหยิบชั่วคราว (เช่น รอตรวจนับ หรือรอตรวจสอบคุณภาพ)</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">เพิ่ม Location ที่ห้ามหยิบ</div>
+          <div class="card-erp-body">
+            <form class="row g-3 align-items-end" onsubmit="handleFormSubmit(event, 'FORBIDDEN LOCATION')">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">คลังสินค้า (Warehouse)</label>
+                <select class="form-select" required>
+                  <option value="W-CENTER">W-CENTER</option>
+                  <option value="WBT">WBT</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">รหัส Location</label>
+                <input type="text" class="form-control" placeholder="เช่น Z9-R02-L01" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">สาเหตุที่ห้ามหยิบ (Reason)</label>
+                <input type="text" class="form-control" placeholder="เช่น กั้นพื้นที่ตรวจนับสต็อกประจำเดือน" required />
+              </div>
+              <div class="col-md-2">
+                <button type="submit" class="btn btn-gambol w-100">ล็อก Location</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตาราง Location ที่ห้ามหยิบปัจจุบัน</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Location Code</th>
+                    <th>Warehouse</th>
+                    <th>Reason</th>
+                    <th>Locked By</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold text-danger">Z9-R01-L04</td>
+                    <td>W-CENTER</td>
+                    <td>รอตรวจสอบ QC สินค้าล็อตใหม่</td>
+                    <td>ADMIN-01</td>
+                    <td><span class="badge bg-danger">Forbidden</span></td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('ปลดล็อก Z9-R01-L04')">ปลดล็อก</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold text-danger">WBT-HOLD-02</td>
+                    <td>WBT</td>
+                    <td>พื้นที่กั้นนับสต็อก Cycle Count</td>
+                    <td>SUPERVISOR</td>
+                    <td><span class="badge bg-danger">Forbidden</span></td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="notifyAction('ปลดล็อก WBT-HOLD-02')">ปลดล็อก</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           10. LOCATION QR MASTER
+      =========================================== -->
+      <section id="page-location-qr-master" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-qr-code"></i> LOCATION QR MASTER - สร้างและพิมพ์ QR Code ประจำ Location</h1>
+            <p class="page-subtitle">สร้างป้ายรหัส QR Code สำหรับติดชั้นวางสินค้าในคลัง</p>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <div class="card-erp h-100">
+              <div class="card-erp-header">ตั้งค่ารหัส Location QR</div>
+              <div class="card-erp-body">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">คลังสินค้า (Warehouse)</label>
+                  <select id="qrWarehouseInput" class="form-select">
+                    <option value="W-CENTER">W-CENTER</option>
+                    <option value="WBT">WBT</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">รหัส Location (Location Code)</label>
+                  <input type="text" id="qrLocationInput" class="form-control" value="WC-A01-R02-L03" />
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-gambol" onclick="generateLocationQRPreview()">
+                    <i class="bi bi-qr-code-scan me-1"></i> สร้างตัวอย่าง QR
+                  </button>
+                  <button type="button" class="btn btn-outline-dark" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> พิมพ์ป้าย QR
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="card-erp h-100">
+              <div class="card-erp-header">ตัวอย่างป้าย Location QR (Preview)</div>
+              <div class="card-erp-body">
+                <div class="qr-preview-box">
+                  <div class="small fw-bold text-uppercase text-muted mb-1" id="qrPreviewWh">WAREHOUSE: W-CENTER</div>
+                  <div class="my-2">
+                    <i class="bi bi-qr-code" style="font-size: 5.5rem; color: var(--ink-dark);"></i>
+                  </div>
+                  <div class="fs-4 fw-bold font-monospace text-danger" id="qrPreviewLoc">WC-A01-R02-L03</div>
+                  <div class="small text-muted mt-1">GAMBOL ERP PICKING LOCATION TAG</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           11. ERP STOCK
+      =========================================== -->
+      <section id="page-erp-stock" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-database-check"></i> ERP STOCK - ตารางเช็คสต็อกแบบ Real-time</h1>
+            <p class="page-subtitle">ตรวจสอบยอดคงเหลือในระบบ ERP เทียบกับยอดจองและยอดพร้อมหยิบ</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-gambol" onclick="fetchFromGAS('getErpStock')">
+            <i class="bi bi-arrow-clockwise me-1"></i> ซิงค์ข้อมูลล่าสุด
+          </button>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางสต็อก ERP (Real-time ERP Stock Inquiry)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>UPC</th>
+                    <th>Product Name</th>
+                    <th class="text-end">ERP On-Hand</th>
+                    <th class="text-end">Reserved</th>
+                    <th class="text-end">Available</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">GM-11029-BLK-41</td>
+                    <td class="font-monospace">8859011200412</td>
+                    <td>GAMBOL 11029 สีดำ เบอร์ 41</td>
+                    <td class="text-end">1,200</td>
+                    <td class="text-end text-warning fw-semibold">200</td>
+                    <td class="text-end text-success fw-bold">1,000</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">GM-42011-NVY-42</td>
+                    <td class="font-monospace">8859011200993</td>
+                    <td>GAMBOL 42011 สีกรมท่า เบอร์ 42</td>
+                    <td class="text-end">850</td>
+                    <td class="text-end text-warning fw-semibold">150</td>
+                    <td class="text-end text-success fw-bold">700</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           12. W-CENTER STOCK
+      =========================================== -->
+      <section id="page-w-center-stock" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-building"></i> W-CENTER STOCK - สต็อกคลัง W-Center</h1>
+            <p class="page-subtitle">แสดงรายการสินค้าคงเหลือแยกตาม Location ในคลัง W-Center</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางสต็อกคลัง W-Center</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Location</th>
+                    <th>SKU</th>
+                    <th>Lot / Batch</th>
+                    <th class="text-end">Carton Qty</th>
+                    <th class="text-end">Total Pairs</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">WC-A01-01</td>
+                    <td>GM-11029-BLK-40</td>
+                    <td>LOT-2505A</td>
+                    <td class="text-end">45</td>
+                    <td class="text-end fw-bold">540</td>
+                    <td><span class="badge bg-success">Ready</span></td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">WC-A01-02</td>
+                    <td>GM-11029-BLK-41</td>
+                    <td>LOT-2505A</td>
+                    <td class="text-end">60</td>
+                    <td class="text-end fw-bold">720</td>
+                    <td><span class="badge bg-success">Ready</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           13. WBT STOCK
+      =========================================== -->
+      <section id="page-wbt-stock" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-archive"></i> WBT STOCK - สต็อกคลัง WBT</h1>
+            <p class="page-subtitle">แสดงรายการสินค้าคงเหลือในคลัง WBT</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางสต็อกคลัง WBT</span>
+            <span class="badge-sample">Mock Data 1 แถว / สถานะจำลอง</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Location</th>
+                    <th>SKU</th>
+                    <th>Description</th>
+                    <th class="text-end">Carton Qty</th>
+                    <th class="text-end">Total Pairs</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">WBT-B02-05</td>
+                    <td>GM-42011-RED-40</td>
+                    <td>GAMBOL 42011 สีแดง เบอร์ 40</td>
+                    <td class="text-end">30</td>
+                    <td class="text-end fw-bold">360</td>
+                    <td><span class="badge bg-success">Available</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           14. SHORTAGE REPORT
+      =========================================== -->
+      <section id="page-shortage-report" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-exclamation-triangle"></i> SHORTAGE REPORT - รายงานสินค้าขาดสต็อก</h1>
+            <p class="page-subtitle">รายการสินค้าที่มียอดสั่งหยิบมากกว่ายอดคงเหลือพร้อมใช้งาน</p>
+          </div>
+          <button type="button" class="btn btn-gambol btn-sm" onclick="exportMockCSV('SHORTAGE_REPORT')">
+            <i class="bi bi-file-earmark-excel me-1"></i> Export Shortage Report
+          </button>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางรายการสินค้าขาดสต็อก (Shortage List)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Job Order</th>
+                    <th>SKU</th>
+                    <th>Required Qty</th>
+                    <th>Available Qty</th>
+                    <th class="text-end">Shortage Qty (ยอดขาด)</th>
+                    <th>Warehouse</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0089</td>
+                    <td>GM-11029-BLK-43</td>
+                    <td>120</td>
+                    <td>84</td>
+                    <td class="text-end fw-bold text-danger">-36</td>
+                    <td>W-CENTER</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0092</td>
+                    <td>GM-42011-BLK-39</td>
+                    <td>60</td>
+                    <td>48</td>
+                    <td class="text-end fw-bold text-danger">-12</td>
+                    <td>WBT</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           15. BT / W-CENTER EXPORT
+      =========================================== -->
+      <section id="page-bt-wcenter-export" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-file-earmark-arrow-down"></i> BT / W-CENTER EXPORT - ส่งออกข้อมูลคลังสินค้า</h1>
+            <p class="page-subtitle">หน้าจอสำหรับกดส่งออกข้อมูลรายการหยิบและยอดสต็อกของ BT และ W-Center</p>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <div class="card-erp h-100">
+              <div class="card-erp-header">ส่งออกข้อมูล W-CENTER (W-Center Export)</div>
+              <div class="card-erp-body">
+                <p class="small text-muted">ส่งออกรายงานสรุปยอดหยิบสินค้าและสต็อกคงเหลือของคลัง W-Center ประจำวัน</p>
+                <button type="button" class="btn btn-gambol" onclick="exportMockCSV('W_CENTER_EXPORT')">
+                  <i class="bi bi-download me-1"></i> Export W-Center Data (.CSV)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="card-erp h-100">
+              <div class="card-erp-header">ส่งออกข้อมูล BT / WBT (BT Export)</div>
+              <div class="card-erp-body">
+                <p class="small text-muted">ส่งออกรายการโอนย้ายและใบหยิบสินค้าของคลัง BT / WBT สำหรับเชื่อมต่อระบบ ERP</p>
+                <button type="button" class="btn btn-dark" onclick="exportMockCSV('BT_EXPORT')">
+                  <i class="bi bi-download me-1"></i> Export BT Data (.CSV)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           16. RESERVED STOCK
+      =========================================== -->
+      <section id="page-reserved-stock" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-shield-lock"></i> RESERVED STOCK - รายการสินค้าที่ถูกจองไว้แล้ว</h1>
+            <p class="page-subtitle">แสดงรายการสต็อกที่ถูกผูกจองกับใบหยิบสินค้าหรือ Job Order ที่ยังไม่ปิดงาน</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางสินค้าที่ถูกจอง (Reserved Inventory)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Reserve ID</th>
+                    <th>SKU</th>
+                    <th>Location</th>
+                    <th>Ref Job Order</th>
+                    <th class="text-end">Reserved Qty</th>
+                    <th>Reserved Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">RSV-2505-01</td>
+                    <td>GM-11029-BLK-41</td>
+                    <td>WC-A01-02</td>
+                    <td>JO-202505-0089</td>
+                    <td class="text-end fw-bold text-primary">200</td>
+                    <td>2025-05-14 08:45</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">RSV-2505-02</td>
+                    <td>GM-42011-NVY-42</td>
+                    <td>WBT-B01-04</td>
+                    <td>JO-202505-0090</td>
+                    <td class="text-end fw-bold text-primary">150</td>
+                    <td>2025-05-14 09:10</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           17. COMPLETED JOBS (HISTORY)
+      =========================================== -->
+      <section id="page-completed-jobs" class="spa-page d-none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title"><i class="bi bi-clock-history"></i> COMPLETED JOBS - ประวัติงานที่ทำเสร็จสิ้นแล้ว</h1>
+            <p class="page-subtitle">ค้นหาประวัติใบงานหยิบสินค้าที่ดำเนินการเสร็จสมบูรณ์ตามช่วงวันที่</p>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-body">
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">ตั้งแต่วันที่ (Start Date)</label>
+                <input type="date" id="historyStartDate" class="form-control" value="2025-05-01" />
+              </div>
+              <div class="col-12 col-md-4">
+                <label class="form-label fw-semibold">ถึงวันที่ (End Date)</label>
+                <input type="date" id="historyEndDate" class="form-control" value="2025-05-14" />
+              </div>
+              <div class="col-12 col-md-4">
+                <button type="button" class="btn btn-gambol w-100" onclick="fetchFromGAS('getCompletedJobs')">
+                  <i class="bi bi-funnel me-1"></i> กรองข้อมูลตามวันที่
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-erp">
+          <div class="card-erp-header">
+            <span>ตารางประวัติงานที่เสร็จสิ้น (Completed Picking History)</span>
+            <span class="badge-sample">Mock Data 2 แถว</span>
+          </div>
+          <div class="card-erp-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-erp mb-0">
+                <thead>
+                  <tr>
+                    <th>Job Order</th>
+                    <th>Completed Date</th>
+                    <th>Customer</th>
+                    <th>Warehouse</th>
+                    <th class="text-end">Picked Qty</th>
+                    <th>Completed By</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0075</td>
+                    <td>2025-05-13 16:40</td>
+                    <td>BIG C SUPERCENTER</td>
+                    <td>W-CENTER</td>
+                    <td class="text-end fw-bold text-success">360</td>
+                    <td>สมชาย คลังสินค้า</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">JO-202505-0076</td>
+                    <td>2025-05-13 17:15</td>
+                    <td>LOTUS'S STORES</td>
+                    <td>WBT</td>
+                    <td class="text-end fw-bold text-success">144</td>
+                    <td>วิภาวรรณ หยิบไว</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inline Status Banner for User Actions -->
+      <div id="statusFeedbackBar" class="alert alert-secondary d-none mt-3 mb-0 py-2 px-3 small" role="status"></div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  /**
+   * ============================================================================
+   * 1. SPA ROUTING SYSTEM (Zero-Reload d-none Switcher + URL Hash #pblmanual)
+   * ============================================================================
+   */
+  const HASH_TO_PAGE_MAP = {
+    home: 'page-home',
+    picking: 'page-create-picking',
+    pblmanual: 'page-create-pbl',
+    activepicking: 'page-active-picking',
+    joborder: 'page-job-order',
+    uploaderp: 'page-upload-erp-stock',
+    upcmaster: 'page-upc-master',
+    looselocation: 'page-loose-location',
+    forbiddenlocation: 'page-forbidden-location',
+    locationqr: 'page-location-qr-master',
+    erpstock: 'page-erp-stock',
+    wcenterstock: 'page-w-center-stock',
+    wbtstock: 'page-wbt-stock',
+    shortagereport: 'page-shortage-report',
+    btwcenterexport: 'page-bt-wcenter-export',
+    reservedstock: 'page-reserved-stock',
+    completedjobs: 'page-completed-jobs'
+  };
+
+  function switchMenu(pageId, updateUrlHash = true) {
+    // 1. ซ่อนทุกหน้าด้วยคลาส d-none
+    const allPages = document.querySelectorAll('.spa-page');
+    allPages.forEach((section) => {
+      section.classList.add('d-none');
+    });
+
+    // 2. แสดงเฉพาะหน้าที่ถูกเลือกโดยเอา d-none ออก
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+      targetPage.classList.remove('d-none');
+    }
+
+    // 3. อัปเดตสถานะปุ่ม Active ใน Sidebar และดึงค่า data-hash
+    const navButtons = document.querySelectorAll('.nav-item-btn');
+    let activeLabel = 'HOME';
+    let activeHash = 'home';
+    navButtons.forEach((btn) => {
+      if (btn.getAttribute('data-page') === pageId) {
+        btn.classList.add('active');
+        activeLabel = btn.innerText.trim();
+        activeHash = btn.getAttribute('data-hash') || 'home';
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 4. อัปเดตชื่อหน้าและ Hash Route บน Top Header Bar
+    const headerBadge = document.getElementById('currentHeaderTitle');
+    if (headerBadge) {
+      headerBadge.textContent = activeLabel;
+    }
+    const hashBadge = document.getElementById('currentHashRoute');
+    if (hashBadge) {
+      hashBadge.textContent = '#' + activeHash;
+    }
+
+    // 5. อัปเดต URL Hash (เช่น #pblmanual) โดยไม่โหลดหน้าเว็บใหม่
+    if (updateUrlHash) {
+      try {
+        history.replaceState(null, '', '#' + activeHash);
+      } catch (e) {
+        window.location.hash = activeHash;
+      }
+    }
+
+    // 6. ปิด Sidebar อัตโนมัติเมื่อคลิกบนหน้าจอมือถือ
+    if (window.innerWidth < 992) {
+      toggleSidebar(false);
+    }
+
+    // ซ่อนแถบแจ้งเตือนเดิมเมื่อเปลี่ยนหน้า
+    const feedbackBar = document.getElementById('statusFeedbackBar');
+    if (feedbackBar) {
+      feedbackBar.classList.add('d-none');
+    }
+  }
+
+  function handleHashRoute() {
+    const rawHash = (window.location.hash || '').replace(/^#/, '').trim().toLowerCase();
+    if (rawHash && HASH_TO_PAGE_MAP[rawHash]) {
+      switchMenu(HASH_TO_PAGE_MAP[rawHash], false);
+    } else {
+      switchMenu('page-home', false);
+    }
+  }
+
+  window.addEventListener('hashchange', handleHashRoute);
+
+  /**
+   * ฟังก์ชันเปิด-ปิด Sidebar บนหน้าจอมือถือ (Responsive Toggle)
+   */
+  function toggleSidebar(show) {
+    const sidebar = document.getElementById('appSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    if (!sidebar || !backdrop) return;
+
+    if (show) {
+      sidebar.classList.add('show');
+      backdrop.classList.remove('d-none');
+    } else {
+      sidebar.classList.remove('show');
+      backdrop.classList.add('d-none');
+    }
+  }
+
+  /**
+   * ============================================================================
+   * 2. GOOGLE APPS SCRIPT (GAS) FETCH API INTEGRATION
+   * ============================================================================
+   * เชื่อมต่อกับ Google Apps Script Web App URL ของคุณโดยตรง
+   */
+  const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwRjLVztwKcXAaomGjoElIL8YxJmixOKC_yEusmU0dUL80z0maZ7UD7Vhz8Jp2lgP_sag/exec';
+
+  async function fetchFromGAS(actionName, payload = {}) {
+    notifyAction(`กำลังเชื่อมต่อ Google Sheet API: action="${actionName}" ...`);
+    const badge = document.getElementById('gasApiBadge');
+    try {
+      if (GAS_WEB_APP_URL) {
+        const response = await fetch(GAS_WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: actionName, ...payload })
+        });
+        const result = await response.json();
+        if (result && result.status === 'ok') {
+          if (badge) {
+            badge.className = 'badge bg-success-subtle text-success border border-success-subtle px-2 py-1';
+            badge.innerHTML = '<i class="bi bi-cloud-check-fill me-1"></i>GAS API Connected';
+          }
+          notifyAction(result.message || `ซิงค์ข้อมูลสำเร็จ (${actionName})`);
+        } else {
+          notifyAction(`แจ้งเตือนจาก API: ${(result && result.message) || 'ไม่สามารถประมวลผลได้'}`);
+        }
+        return result;
+      }
+      return { status: 'ok', action: actionName, mock: true };
+    } catch (error) {
+      console.error('GAS Fetch Error:', error);
+      notifyAction(`ไม่สามารถเชื่อมต่อ API ได้ขณะนี้ (${actionName}) - แสดงผลด้วยข้อมูลในหน้าเว็บ`);
+      return { status: 'error', message: error.message };
+    }
+  }
+
+  async function loadDashboardData() {
+    const res = await fetchFromGAS('getDashboardSummary');
+    if (res && res.status === 'ok' && res.data) {
+      if (typeof res.data.totalJobs === 'number' && res.data.totalJobs > 0) {
+        document.getElementById('kpi-total-jobs').textContent = res.data.totalJobs;
+        document.getElementById('kpi-active-jobs').textContent = res.data.activeJobs;
+        document.getElementById('kpi-completed-jobs').textContent = res.data.completedJobs;
+        document.getElementById('kpi-shortage-items').textContent = res.data.shortageItems;
+      }
+    }
+  }
+
+  /**
+   * ============================================================================
+   * 3. UI HELPER FUNCTIONS (Forms, QR Preview, CSV Export)
+   * ============================================================================
+   */
+  function notifyAction(message) {
+    const feedbackBar = document.getElementById('statusFeedbackBar');
+    if (!feedbackBar) return;
+    feedbackBar.textContent = message;
+    feedbackBar.classList.remove('d-none');
+  }
+
+  function handleFormSubmit(event, moduleName) {
+    event.preventDefault();
+    notifyAction(`[${moduleName}] บันทึกข้อมูลจำลองเรียบร้อยแล้ว (พร้อมส่งต่อฟังก์ชัน fetchFromGAS)`);
+  }
+
+  /**
+   * ฟังก์ชันจัดการตารางรายการในหน้า CREATE PBL (#pblmanual)
+   */
+  function addPblManualRow() {
+    const tbody = document.getElementById('pblManualTableBody');
+    const customer = document.getElementById('pblItemCustomer').value;
+    const sku = document.getElementById('pblItemSku').value.trim();
+    const loc = document.getElementById('pblItemLoc').value.trim() || 'WC-A01-01';
+    const qty = parseInt(document.getElementById('pblItemQty').value, 10) || 0;
+
+    if (!sku || qty <= 0) {
+      notifyAction('กรุณาระบุรหัสสินค้า (SKU) และจำนวนหยิบให้ถูกต้อง');
+      return;
+    }
+
+    const rowIndex = tbody.querySelectorAll('tr').length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${rowIndex}</td>
+      <td>${customer}</td>
+      <td class="fw-bold">${sku}</td>
+      <td><span class="badge bg-secondary">${loc}</span></td>
+      <td class="text-end fw-bold">${qty}</td>
+      <td class="text-center">
+        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removePblRow(this)" aria-label="Remove Row">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    updatePblRowCount();
+    notifyAction(`เพิ่มรายการ ${sku} (${qty} คู่) เข้าสู่ชุด #pblmanual แล้ว`);
+  }
+
+  function removePblRow(btn) {
+    const row = btn.closest('tr');
+    if (row) {
+      row.remove();
+      const tbody = document.getElementById('pblManualTableBody');
+      tbody.querySelectorAll('tr').forEach((tr, idx) => {
+        tr.cells[0].textContent = idx + 1;
+      });
+      updatePblRowCount();
+    }
+  }
+
+  function updatePblRowCount() {
+    const tbody = document.getElementById('pblManualTableBody');
+    const countEl = document.getElementById('pblRowCount');
+    if (tbody && countEl) {
+      countEl.textContent = tbody.querySelectorAll('tr').length;
+    }
+  }
+
+  function handlePblManualSubmit(event) {
+    event.preventDefault();
+    const batchNo = document.getElementById('pblBatchNo').value;
+    const warehouse = document.getElementById('pblWarehouse').value;
+    const route = document.getElementById('pblRoute').value;
+    const deliveryDate = document.getElementById('pblDeliveryDate').value;
+    const jobOrderRef = document.getElementById('pblJobOrderRef').value;
+    const team = document.getElementById('pblTeam').value;
+
+    const items = [];
+    document.querySelectorAll('#pblManualTableBody tr').forEach((tr) => {
+      items.push({
+        customer: tr.cells[1].textContent.trim(),
+        sku: tr.cells[2].textContent.trim(),
+        location: tr.cells[3].innerText.trim(),
+        qty: Number(tr.cells[4].textContent.trim()) || 0
+      });
+    });
+
+    fetchFromGAS('savePblManual', {
+      batchNo,
+      warehouse,
+      route,
+      deliveryDate,
+      jobOrderRef,
+      team,
+      items
+    });
+  }
+
+  function generateLocationQRPreview() {
+    const wh = document.getElementById('qrWarehouseInput').value;
+    const loc = document.getElementById('qrLocationInput').value.trim() || 'N/A';
+    document.getElementById('qrPreviewWh').textContent = `WAREHOUSE: ${wh}`;
+    document.getElementById('qrPreviewLoc').textContent = loc;
+    notifyAction(`อัปเดตตัวอย่างป้าย QR Code สำหรับ Location: ${loc}`);
+  }
+
+  function exportMockCSV(reportType) {
+    const csvContent = "data:text/csv;charset=utf-8,Report,SKU,Location,Qty\n" +
+      `${reportType},GM-11029-BLK-41,WC-A01-02,120`;
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${reportType}_MOCK.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    notifyAction(`สั่งส่งออกไฟล์ ${reportType}_MOCK.csv เรียบร้อยแล้ว`);
+  }
+
+  // กำหนดค่าเริ่มต้นให้เปิดหน้า HOME ทันทีเมื่อโหลดเว็บครั้งแรก
+  document.addEventListener('DOMContentLoaded', () => {
+    switchMenu('page-home');
+  });
+</script>
+
+</body>
+</html>
